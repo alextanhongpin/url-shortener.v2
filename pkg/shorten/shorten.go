@@ -15,8 +15,8 @@ const N = 6
 // Shortener implements the Shortener interface.
 type Shortener struct{}
 
-// New returns a new Shortener implementation.
-func New() *Shortener {
+// NewShortener returns a new Shortener implementation.
+func NewShortener() *Shortener {
 	return &Shortener{}
 }
 
