@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/alextanhongpin/url-shortener/domain"
+
 	"github.com/leebenson/conform"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -19,7 +21,7 @@ var (
 type Config struct {
 	validator *validator.Validate
 	shortener domain.Shortener
-	repo      domain.URLRepository
+	repo      domain.Repository
 }
 
 func DefaultConfig(db *sql.DB) Config {
@@ -49,7 +51,9 @@ func (s *Service) Get(ctx context.Context, req domain.GetRequest) (*domain.GetRe
 		return nil, err
 	}
 
+	log.Println(req.Code)
 	longURL, err := s.config.repo.GetByCode(req.Code)
+	log.Println("got longurl", longURL)
 	if err == sql.ErrNoRows {
 		return nil, ErrDoesNotExists
 	}
@@ -67,9 +71,11 @@ func (s *Service) Put(ctx context.Context, req domain.PutRequest) (*domain.PutRe
 		return nil, err
 	}
 
-	code := req.Code
-	if code != "" {
-		exists, err := s.config.repo.CheckExists(code)
+	// To ensure that it is really unique, even for the same url,
+	// use the unique user id to hash the url.
+	e := domain.ShortURL(req)
+	if e.Code != "" {
+		exists, err := s.config.repo.CheckExists(e.Code)
 		if err != nil {
 			return nil, err
 		}
@@ -77,18 +83,19 @@ func (s *Service) Put(ctx context.Context, req domain.PutRequest) (*domain.PutRe
 			return nil, ErrAlreadyExists
 		}
 	} else {
-		code = s.config.shortener.Shorten(req.LongURL)
+		e.Code = s.config.shortener.Shorten(req.LongURL)
 	}
 
-	_, err := s.config.repo.Create(code, req.LongURL, req.ExpireAt)
+	_, err := s.config.repo.Create(e)
 	for err == ErrAlreadyExists {
-		code = s.config.shortener.Shorten(code)
-		_, err = s.config.repo.Create(code, req.LongURL, req.ExpireAt)
+		e.Code = s.config.shortener.Shorten(e.Code)
+		_, err = s.config.repo.Create(e)
+		log.Println("exists", err)
 	}
 	if err != nil {
 		return nil, err
 	}
-	return &domain.PutResponse{Code: code}, nil
+	return &domain.PutResponse{Code: e.Code}, nil
 }
 
 func (s *Service) CheckExists(ctx context.Context, req domain.CheckExistsRequest) (*domain.CheckExistsResponse, error) {
@@ -96,6 +103,7 @@ func (s *Service) CheckExists(ctx context.Context, req domain.CheckExistsRequest
 	if err := s.config.validator.Struct(&req); err != nil {
 		return nil, err
 	}
+
 	exists, err := s.config.repo.CheckExists(req.Code)
 	if err != nil {
 		return nil, err

@@ -1,8 +1,9 @@
 package shorten
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"encoding/base64"
+	"hash"
 )
 
 // Here we are implementing a shortener with md5, but we can implement other
@@ -21,13 +22,12 @@ func New() *Shortener {
 
 // Shorten takes a long url and return the short url code.
 func (s *Shortener) Shorten(url string) string {
-	return Shorten(url, N)
+	return Shorten(sha256.New(), url)[:N]
 }
 
-// Shorten shortens a string to length n.
-func Shorten(str string, n int) string {
-	h := md5.New()
+// ShortenSha256 shortens a string using SHA256.
+func Shorten(h hash.Hash, str string) string {
 	h.Write([]byte(str))
 	code := h.Sum(nil)
-	return base64.URLEncoding.EncodeToString(code)[:n]
+	return base64.URLEncoding.EncodeToString(code)
 }

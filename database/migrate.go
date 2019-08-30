@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/alextanhongpin/url-shortener/infra/migrations"
+	"github.com/alextanhongpin/url-shortener/database/migrations"
 
 	"github.com/mattes/migrate"
 	"github.com/mattes/migrate/database/postgres"

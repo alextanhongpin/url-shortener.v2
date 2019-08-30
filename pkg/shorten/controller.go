@@ -5,14 +5,17 @@ import (
 	"net/http"
 
 	"github.com/alextanhongpin/url-shortener/domain"
+	"github.com/alextanhongpin/url-shortener/pkg/logger"
+	"go.uber.org/zap"
+
 	"github.com/go-chi/chi"
 )
 
 type Controller struct {
-	service domain.URLService
+	service domain.Service
 }
 
-func NewController(service domain.URLService) *Controller {
+func NewController(service domain.Service) *Controller {
 	return &Controller{service}
 }
 
@@ -21,8 +24,11 @@ func (ctl *Controller) GetRedirect(w http.ResponseWriter, r *http.Request) {
 	req.Code = chi.URLParam(r, "code")
 
 	ctx := r.Context()
+	log := logger.WithContext(ctx, zap.Object("req", &req))
+
 	res, err := ctl.service.Get(ctx, req)
 	if err != nil {
+		log.Error("getRedirectError", zap.Error(err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -35,9 +41,13 @@ func (ctl *Controller) PostCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	ctx := r.Context()
+	log := logger.WithContext(ctx, zap.Object("req", &req))
+
 	res, err := ctl.service.Put(ctx, req)
 	if err != nil {
+		log.Error("postCreateError", zap.Error(err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -47,9 +57,13 @@ func (ctl *Controller) PostCreate(w http.ResponseWriter, r *http.Request) {
 func (ctl *Controller) GetSearch(w http.ResponseWriter, r *http.Request) {
 	var req domain.CheckExistsRequest
 	req.Code = chi.URLParam(r, "code")
+
 	ctx := r.Context()
+	log := logger.WithContext(ctx, zap.Object("req", &req))
+
 	res, err := ctl.service.CheckExists(ctx, req)
 	if err != nil {
+		log.Error("checkExistsError", zap.Error(err))
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

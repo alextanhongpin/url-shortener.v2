@@ -2,10 +2,14 @@ package shorten
 
 import (
 	"database/sql"
-	"time"
 
-	"github.com/alextanhongpin/url-shortener/infra/database"
+	"github.com/lib/pq"
+
+	"github.com/alextanhongpin/url-shortener/database"
+	"github.com/alextanhongpin/url-shortener/domain"
 )
+
+const DuplicatePrimaryKeyViolation = "23505"
 
 type Repository struct {
 	stmts database.Stmts
@@ -21,6 +25,7 @@ func (r *Repository) GetByCode(code string) (string, error) {
 	var longURL string
 	err := r.stmts[GetByCode].QueryRow(code).Scan(&longURL)
 	return longURL, err
+
 }
 
 func (r *Repository) CheckExists(code string) (bool, error) {
@@ -29,9 +34,15 @@ func (r *Repository) CheckExists(code string) (bool, error) {
 	return exists, err
 }
 
-func (r *Repository) Create(code, longURL string, expireAt time.Time) (bool, error) {
-	res, err := r.stmts[Create].Exec(code, longURL, expireAt)
+func (r *Repository) Create(entity domain.ShortURL) (bool, error) {
+	res, err := r.stmts[Create].Exec(entity.Code, entity.LongURL, entity.ExpireAt)
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			// log.Printf("pqError: %#v", pqErr)
+			if pqErr.Code == DuplicatePrimaryKeyViolation {
+				return false, ErrAlreadyExists
+			}
+		}
 		return false, err
 	}
 	rows, err := res.RowsAffected()

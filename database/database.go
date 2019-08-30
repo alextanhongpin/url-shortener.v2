@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
 	"github.com/mattes/migrate"
 )
@@ -19,22 +18,6 @@ type RawStmts map[Stmt]string
 
 // Stmts holds the prepared statements.c
 type Stmts map[Stmt]*sql.Stmt
-
-type Config struct {
-	Username string `envconfig:"DB_USER"`
-	Password string `envconfig:"DB_PASS"`
-	Database string `envconfig:"DB_NAME"`
-	Host     string `envconfig:"DB_HOST"`
-	Port     string `envconfig:"DB_PORT"`
-}
-
-func NewConfig() Config {
-	var cfg Config
-	if err := envconfig.Process("", &cfg); err != nil {
-		panic(err)
-	}
-	return cfg
-}
 
 // MustConn initialize a connection with the database.
 func MustConn(cfg Config) *sql.DB {

@@ -3,6 +3,8 @@ package domain
 import (
 	"context"
 	"time"
+
+	"go.uber.org/zap/zapcore"
 )
 
 // Shortener represents the operations for the url shortener.
@@ -10,15 +12,22 @@ type Shortener interface {
 	Shorten(longURL string) (code string)
 }
 
-// URLRepository represents the query layer for the database.
-type URLRepository interface {
+// ShortURL is the entity.
+type ShortURL struct {
+	Code     string    `json:"code"`
+	LongURL  string    `json:"long_url"`
+	ExpireAt time.Time `json:"expire_at"`
+}
+
+// Repository represents the query layer for the database.
+type Repository interface {
 	GetByCode(code string) (longURL string, err error)
-	Create(code, longURL string, expireAt time.Time) (bool, error)
+	Create(ShortURL) (bool, error)
 	CheckExists(code string) (bool, error)
 }
 
-// URLService represents the service layer for url operations.
-type URLService interface {
+// Service represents the service layer for url operations.
+type Service interface {
 	Get(context.Context, GetRequest) (*GetResponse, error)
 	Put(context.Context, PutRequest) (*PutResponse, error)
 	CheckExists(context.Context, CheckExistsRequest) (*CheckExistsResponse, error)
@@ -30,11 +39,17 @@ type (
 		Code string `json:"code" validate:"required,max=6" conform:"trim"`
 	}
 
-	// GetResponses is the response body.
+	// GetResponse is the response body.
 	GetResponse struct {
 		LongURL string `json:"long_url"`
 	}
 )
+
+func (req *GetRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("code", req.Code)
+	return nil
+}
+
 type (
 	// PutRequest is the request body.
 	PutRequest struct {
@@ -49,6 +64,14 @@ type (
 	}
 )
 
+func (req *PutRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+
+	enc.AddString("code", req.Code)
+	enc.AddString("long_url", req.LongURL)
+	enc.AddTime("expire_at", req.ExpireAt)
+	return nil
+}
+
 type (
 	// CheckExistsRequest is the request body.
 	CheckExistsRequest struct {
@@ -60,3 +83,8 @@ type (
 		Exist bool `json:"exist"`
 	}
 )
+
+func (req *CheckExistsRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("code", req.Code)
+	return nil
+}

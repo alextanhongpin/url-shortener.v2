@@ -1,6 +1,7 @@
 package shorten_test
 
 import (
+	"crypto/sha256"
 	"testing"
 
 	"github.com/alextanhongpin/url-shortener/pkg/shorten"
@@ -8,7 +9,7 @@ import (
 
 func testShortenString(t *testing.T, str string) {
 	shortener := shorten.New()
-	expected := shorten.Shorten(str, 6)
+	expected := shorten.Shorten(sha256.New(), str)[:6]
 	actual := shortener.Shorten(str)
 
 	if expected != actual {

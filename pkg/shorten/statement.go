@@ -1,6 +1,6 @@
 package shorten
 
-import "github.com/alextanhongpin/url-shortener/infra/database"
+import "github.com/alextanhongpin/url-shortener/database"
 
 // There are no type safety for the sql queries - the query might fail when we
 // execute the function. One way to check if the queries are "safe" is to
@@ -28,11 +28,11 @@ var rawStmts = database.RawStmts{
 		SELECT long_url 
 		  FROM url
 		 WHERE code = $1
-		   AND expire_at > CURRENT_TIMESTAMP
 	`,
+	// AND expire_at > CURRENT_TIMESTAMP
 
 	CheckExists: `
-		SELECT EXISTS(SELECT 1 FROM url WHERE code = $1)
+		SELECT EXISTS (SELECT 1 FROM url WHERE code = $1)
 	`,
 
 	Create: `
