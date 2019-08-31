@@ -10,15 +10,6 @@ import (
 	"github.com/mattes/migrate"
 )
 
-// Stmt represents a unique id for the stmt.
-type Stmt uint
-
-// RawStmts holds the unprepared statements.
-type RawStmts map[Stmt]string
-
-// Stmts holds the prepared statements.c
-type Stmts map[Stmt]*sql.Stmt
-
 // MustConn initialize a connection with the database.
 func MustConn(cfg Config) *sql.DB {
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
@@ -51,17 +42,4 @@ func MustConn(cfg Config) *sql.DB {
 	}
 	log.Println("[db]: migration completed with:", err)
 	return db
-}
-
-// Prepare takes the raw statements and returns the prepared statements.
-func Prepare(db *sql.DB, rawStmts RawStmts) Stmts {
-	stmts := make(Stmts)
-	var err error
-	for key, value := range rawStmts {
-		stmts[key], err = db.Prepare(value)
-		if err != nil {
-			panic(err)
-		}
-	}
-	return stmts
 }

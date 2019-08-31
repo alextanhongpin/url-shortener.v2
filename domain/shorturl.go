@@ -2,9 +2,15 @@ package domain
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.uber.org/zap/zapcore"
+)
+
+var (
+	ErrAlreadyExists = errors.New("short url already exists")
+	ErrDoesNotExists = errors.New("short url does not exist")
 )
 
 // Shortener represents the operations for the url shortener.

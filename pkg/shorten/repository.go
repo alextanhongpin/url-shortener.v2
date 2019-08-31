@@ -17,7 +17,7 @@ type Repository struct {
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		stmts: database.Prepare(db, rawStmts),
+		stmts: rawStmts.MustPrepare(db),
 	}
 }
 
@@ -40,7 +40,7 @@ func (r *Repository) Create(entity domain.ShortURL) (bool, error) {
 		if pqErr, ok := err.(*pq.Error); ok {
 			// log.Printf("pqError: %#v", pqErr)
 			if pqErr.Code == DuplicatePrimaryKeyViolation {
-				return false, ErrAlreadyExists
+				return false, domain.ErrAlreadyExists
 			}
 		}
 		return false, err

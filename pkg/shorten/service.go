@@ -3,7 +3,6 @@ package shorten
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -16,11 +15,6 @@ import (
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
-
-var (
-	ErrAlreadyExists = errors.New("short url already exists")
-	ErrDoesNotExists = errors.New("short url does not exist")
-)
 
 type Service struct {
 	repo      domain.Repository
@@ -42,7 +36,7 @@ func (s *Service) Get(ctx context.Context, req domain.GetRequest) (*domain.GetRe
 
 	longURL, err := s.repo.GetByCode(req.Code)
 	if err == sql.ErrNoRows {
-		return nil, ErrDoesNotExists
+		return nil, domain.ErrDoesNotExists
 	}
 	if err != nil {
 		return nil, err
@@ -67,14 +61,14 @@ func (s *Service) Put(ctx context.Context, req domain.PutRequest) (*domain.PutRe
 			return nil, err
 		}
 		if exists {
-			return nil, ErrAlreadyExists
+			return nil, domain.ErrAlreadyExists
 		}
 	} else {
 		e.Code = s.shortener.Shorten(req.LongURL)
 	}
 
 	_, err := s.repo.Create(e)
-	for err == ErrAlreadyExists {
+	for err == domain.ErrAlreadyExists {
 		e.Code = s.shortener.Shorten(e.Code + fmt.Sprint(rand.Int()))
 		_, err = s.repo.Create(e)
 	}
