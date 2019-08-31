@@ -5,6 +5,8 @@ github.com/Microsoft/go-winio v0.4.14 h1:+hMXMk01us9KgxGb7ftKQt2Xpf5hH/yky+TDA+q
 github.com/Microsoft/go-winio v0.4.14/go.mod h1:qXqCSQ3Xa7+6tgxaGTIe4Kpcdsi+P8jBhyzoq1bpyYA=
 github.com/alextanhongpin/pkg v0.0.1 h1:JRdVL3ERMfz7TuqIE8yB0qAqKsn80wVaJIgbJleJ5gE=
 github.com/alextanhongpin/pkg v0.0.1/go.mod h1:oIS0bokVx4pVu8iDfQ2g+I+Y3Ys2s1OztolOnmYs0+o=
+github.com/alextanhongpin/pkg v0.0.2 h1:3TrdzPI/Bxca9FTBv422jhjq+/gjdUQ6jgAWkW+hJnw=
+github.com/alextanhongpin/pkg v0.0.2/go.mod h1:oIS0bokVx4pVu8iDfQ2g+I+Y3Ys2s1OztolOnmYs0+o=
 github.com/codegangsta/cli v1.20.0/go.mod h1:/qJNoX69yVSKu5o4jLyXAENLRyk1uhi7zkbQ3slBdOA=
 github.com/corpix/uarand v0.1.1 h1:RMr1TWc9F4n5jiPDzFHtmaUXLKLNUFK0SgCLo4BhX/U=
 github.com/corpix/uarand v0.1.1/go.mod h1:SFKZvkcRoLqVRFZ4u25xPmp6m9ktANfbpXZ7SJ0/FNU=

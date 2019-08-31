@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/alextanhongpin/pkg/grace"
@@ -43,7 +42,7 @@ func main() {
 	}
 
 	// Implements graceful shutdown.
-	shutdown := grace.New(r, fmt.Sprint(cfg.Port))
+	shutdown := grace.New(r, cfg.Port)
 	defer func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 		defer cancel()
