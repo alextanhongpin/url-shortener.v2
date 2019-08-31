@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/alextanhongpin/pkg/grace"
-
+	"github.com/alextanhongpin/url-shortener/api/middleware"
 	"github.com/alextanhongpin/url-shortener/infra"
 	"github.com/alextanhongpin/url-shortener/pkg/health"
 	"github.com/alextanhongpin/url-shortener/pkg/shorten"
@@ -23,6 +23,7 @@ func main() {
 	// Make the type explicit.
 	// Setup routes.
 	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
 
 	// UseCase: Serve health endpoint.
 	{
@@ -34,10 +35,10 @@ func main() {
 	// We can also make this as a foogle (feature-toggle):
 	// if (enableRoute)
 	{
-		cfg := shorten.DefaultConfig(ctn.DB())
-		svc := shorten.NewService(cfg)
+		repo := shorten.NewRepository(ctn.DB())
+		svc := shorten.NewService(repo, shorten.NewShortener())
 		ctl := shorten.NewController(svc)
-		r.Mount("/", ctl.Router())
+		r.Mount("/v1", ctl.Router())
 	}
 
 	// Implements graceful shutdown.

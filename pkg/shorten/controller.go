@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/alextanhongpin/url-shortener/domain"
-	"github.com/alextanhongpin/url-shortener/pkg/logger"
-	"go.uber.org/zap"
+	"github.com/alextanhongpin/url-shortener/infra/logger"
 
 	"github.com/go-chi/chi"
+	"go.uber.org/zap"
 )
 
 type Controller struct {

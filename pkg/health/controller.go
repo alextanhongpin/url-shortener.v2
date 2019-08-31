@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alextanhongpin/url-shortener/domain"
+
 	"github.com/go-chi/chi"
 )
 
