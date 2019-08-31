@@ -19,6 +19,7 @@ func main() {
 
 	// Container is responsible for starting/stopping all infrastructure.
 	ctn := infra.NewContainer()
+	defer ctn.Close()
 
 	// Make the type explicit.
 	// Setup routes.
