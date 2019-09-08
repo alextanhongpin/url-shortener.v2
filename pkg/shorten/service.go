@@ -19,18 +19,25 @@ func init() {
 type Service struct {
 	repo      domain.Repository
 	shortener domain.Shortener
+	before    func(interface{}) error
 }
 
 func NewService(repo domain.Repository, shortener domain.Shortener) *Service {
 	return &Service{
 		repo:      repo,
 		shortener: shortener,
+		before: func(req interface{}) error {
+			// Trim the strings with the conform tag.
+			conform.Strings(req)
+
+			// Validate requests.
+			return domain.Validator.Struct(req)
+		},
 	}
 }
 
 func (s *Service) Get(ctx context.Context, req domain.GetRequest) (*domain.GetResponse, error) {
-	conform.Strings(&req)
-	if err := domain.Validator.Struct(&req); err != nil {
+	if err := s.before(&req); err != nil {
 		return nil, err
 	}
 
@@ -47,8 +54,7 @@ func (s *Service) Get(ctx context.Context, req domain.GetRequest) (*domain.GetRe
 }
 
 func (s *Service) Put(ctx context.Context, req domain.PutRequest) (*domain.PutResponse, error) {
-	conform.Strings(&req)
-	if err := domain.Validator.Struct(&req); err != nil {
+	if err := s.before(&req); err != nil {
 		return nil, err
 	}
 
@@ -79,11 +85,9 @@ func (s *Service) Put(ctx context.Context, req domain.PutRequest) (*domain.PutRe
 }
 
 func (s *Service) CheckExists(ctx context.Context, req domain.CheckExistsRequest) (*domain.CheckExistsResponse, error) {
-	conform.Strings(&req)
-	if err := domain.Validator.Struct(&req); err != nil {
+	if err := s.before(&req); err != nil {
 		return nil, err
 	}
-
 	exists, err := s.repo.CheckExists(req.Code)
 	if err != nil {
 		return nil, err

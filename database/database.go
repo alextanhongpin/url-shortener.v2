@@ -24,13 +24,12 @@ func MustConn(cfg Config) *sql.DB {
 		panic(err)
 	}
 	for i := 0; i < 3; i++ {
-		err := db.Ping()
-		if err != nil {
+		if err := db.Ping(); err != nil {
 			log.Println("retrying db connection in 5 seconds")
 			time.Sleep(5 * time.Second)
-		} else {
-			break
+			continue
 		}
+		break
 	}
 	if err != nil {
 		panic(err)
