@@ -3,6 +3,7 @@ module github.com/alextanhongpin/url-shortener
 go 1.12
 
 require (
+	github.com/Masterminds/squirrel v1.1.0
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/alextanhongpin/pkg v0.0.2
 	github.com/corpix/uarand v0.1.1 // indirect

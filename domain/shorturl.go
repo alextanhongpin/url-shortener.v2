@@ -27,8 +27,11 @@ type ShortURL struct {
 
 // Repository represents the query layer for the database.
 type Repository interface {
-	GetByCode(code string) (longURL string, err error)
+	// CRUD.
 	Create(ShortURL) (bool, error)
+
+	// Scopes.
+	WithCode(code string) (longURL string, err error)
 	CheckExists(code string) (bool, error)
 }
 
@@ -51,6 +54,10 @@ type (
 	}
 )
 
+func NewGetResponse(longURL string) *GetResponse {
+	return &GetResponse{longURL}
+}
+
 func (req *GetRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("code", req.Code)
 	return nil
@@ -70,8 +77,11 @@ type (
 	}
 )
 
-func (req *PutRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+func NewPutResponse(code string) *PutResponse {
+	return &PutResponse{code}
+}
 
+func (req *PutRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("code", req.Code)
 	enc.AddString("long_url", req.LongURL)
 	enc.AddTime("expire_at", req.ExpireAt)
@@ -89,6 +99,10 @@ type (
 		Exist bool `json:"exist"`
 	}
 )
+
+func NewCheckExistsResponse(exist bool) *CheckExistsResponse {
+	return &CheckExistsResponse{exist}
+}
 
 func (req *CheckExistsRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("code", req.Code)

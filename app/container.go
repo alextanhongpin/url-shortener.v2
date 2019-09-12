@@ -1,4 +1,4 @@
-package infra
+package app
 
 import (
 	"database/sql"
@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/alextanhongpin/url-shortener/database"
+
 	"go.uber.org/zap"
 )
 

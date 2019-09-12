@@ -1,4 +1,4 @@
-package shorten
+package shorturl
 
 import "github.com/alextanhongpin/url-shortener/database"
 
@@ -11,9 +11,9 @@ import "github.com/alextanhongpin/url-shortener/database"
 const (
 	_ database.Stmt = iota
 
-	// GetByCode returns the long url for the given short url code, only if
+	// WithCode returns the long url for the given short url code, only if
 	// the url has not expired yet.
-	GetByCode
+	WithCode
 
 	// Create creates a new entry of the short and long url with the expiry
 	// date.
@@ -24,7 +24,7 @@ const (
 )
 
 var rawStmts = database.RawStmts{
-	GetByCode: `
+	WithCode: `
 		SELECT long_url 
 		  FROM url
 		 WHERE code = $1

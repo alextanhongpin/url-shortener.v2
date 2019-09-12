@@ -1,4 +1,4 @@
-package shorten
+package shorturl
 
 import (
 	"crypto/sha256"

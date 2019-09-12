@@ -34,11 +34,17 @@ func MustConn(cfg Config) *sql.DB {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("[db]: migration started")
-	err = runMigration(db)
-	if err != nil && err != migrate.ErrNoChange {
-		panic(err)
+
+	if cfg.EnableDBMigration {
+		log.Println("[db]: migration started")
+		err = runMigration(db)
+		if err != nil && err != migrate.ErrNoChange {
+			panic(err)
+		}
+		log.Println("[db]: migration completed with:", err)
+	} else {
+		log.Println("[db]: migration disabled")
 	}
-	log.Println("[db]: migration completed with:", err)
+
 	return db
 }

@@ -1,11 +1,11 @@
-package shorten
+package shorturl
 
 import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/alextanhongpin/url-shortener/app/logger"
 	"github.com/alextanhongpin/url-shortener/domain"
-	"github.com/alextanhongpin/url-shortener/infra/logger"
 
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"

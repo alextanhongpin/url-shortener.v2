@@ -5,19 +5,20 @@ import (
 	"time"
 
 	"github.com/alextanhongpin/pkg/grace"
+
 	"github.com/alextanhongpin/url-shortener/api/middleware"
-	"github.com/alextanhongpin/url-shortener/infra"
+	"github.com/alextanhongpin/url-shortener/app"
 	"github.com/alextanhongpin/url-shortener/pkg/health"
-	"github.com/alextanhongpin/url-shortener/pkg/shorten"
+	"github.com/alextanhongpin/url-shortener/pkg/shorturl"
 
 	"github.com/go-chi/chi"
 )
 
 func main() {
-	cfg := infra.NewConfig()
+	cfg := app.NewConfig()
 
 	// Container is responsible for starting/stopping all infrastructure.
-	ctn := infra.NewContainer()
+	ctn := app.NewContainer()
 	defer ctn.Close()
 
 	// Make the type explicit.
@@ -35,9 +36,9 @@ func main() {
 	// We can also make this as a foogle (feature-toggle):
 	// if (enableRoute)
 	{
-		repo := shorten.NewRepository(ctn.DB())
-		svc := shorten.NewService(repo, shorten.NewShortener())
-		ctl := shorten.NewController(svc)
+		repo := shorturl.NewRepository(ctn.DB())
+		svc := shorturl.NewService(repo, shorturl.NewShortener())
+		ctl := shorturl.NewController(svc)
 		r.Mount("/v1", ctl.Router())
 	}
 

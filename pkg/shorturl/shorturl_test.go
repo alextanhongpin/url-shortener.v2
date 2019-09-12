@@ -1,4 +1,4 @@
-package shorten_test
+package shorturl_test
 
 import (
 	"crypto/sha256"
