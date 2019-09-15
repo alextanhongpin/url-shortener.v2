@@ -8,8 +8,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/alextanhongpin/url-shortener/app"
 	"github.com/alextanhongpin/url-shortener/domain"
+	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/leebenson/conform"
 )
@@ -24,7 +24,7 @@ type Service struct {
 	before    func(interface{}) error
 }
 
-func NewService(urls domain.Repository, shortener domain.Shortener) *Service {
+func NewService(urls domain.Repository, shortener domain.Shortener, validator *validator.Validate) *Service {
 	return &Service{
 		urls:      urls,
 		shortener: shortener,
@@ -33,7 +33,7 @@ func NewService(urls domain.Repository, shortener domain.Shortener) *Service {
 			conform.Strings(req)
 
 			// Validate requests.
-			return app.Validator.Struct(req)
+			return validator.Struct(req)
 		},
 	}
 }

@@ -37,7 +37,7 @@ func main() {
 	// if (enableRoute)
 	{
 		repo := shorturl.NewRepository(ctn.DB())
-		svc := shorturl.NewService(repo, shorturl.NewShortener())
+		svc := shorturl.NewService(repo, shorturl.NewShortener(), ctn.Validator())
 		ctl := shorturl.NewController(svc)
 		r.Mount("/v1", ctl.Router())
 	}

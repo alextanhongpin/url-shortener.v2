@@ -29,6 +29,10 @@ type ShortURL struct {
 type Repository interface {
 	// CRUD.
 	Create(ShortURL) (bool, error)
+	// All(limit, offset int) ([]ShortURL, error)
+	// Find(id int) (ShortURL, error)
+	// Update(ShortURL) (bool, error)
+	// Delete(id int) (bool, error)
 
 	// Scopes.
 	WithCode(code string) (longURL string, err error)

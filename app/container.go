@@ -6,13 +6,15 @@ import (
 	"os"
 
 	"github.com/alextanhongpin/url-shortener/database"
+	"gopkg.in/go-playground/validator.v9"
 
 	"go.uber.org/zap"
 )
 
 type Container struct {
-	db  *sql.DB
-	log *zap.Logger
+	db        *sql.DB
+	log       *zap.Logger
+	validator *validator.Validate
 }
 
 func (c *Container) Close() {
@@ -28,10 +30,15 @@ func (c *Container) DB() *sql.DB {
 	return c.db
 }
 
+func (c *Container) Validator() *validator.Validate {
+	return c.validator
+}
+
 func NewContainer() *Container {
 	return &Container{
-		log: initLogger(),
-		db:  database.MustConn(database.NewConfig()),
+		log:       initLogger(),
+		db:        database.MustConn(database.NewConfig()),
+		validator: validator.New(),
 	}
 }
 

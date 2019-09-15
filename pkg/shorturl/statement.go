@@ -29,7 +29,6 @@ var rawStmts = database.RawStmts{
 		  FROM url
 		 WHERE code = $1
 	`,
-	// AND expire_at > CURRENT_TIMESTAMP
 
 	CheckExists: `
 		SELECT EXISTS (SELECT 1 FROM url WHERE code = $1)

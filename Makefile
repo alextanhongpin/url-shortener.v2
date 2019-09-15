@@ -5,7 +5,7 @@ VERSION := $(shell git rev-parse --short HEAD)
 DATABASE_URL := postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
 MIGRATION_PATH := database/migrations
 
-start: generate
+start: generate up
 	@go run main.go
 
 init:
