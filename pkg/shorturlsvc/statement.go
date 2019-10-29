@@ -1,4 +1,4 @@
-package shorturl
+package shorturlsvc
 
 import "github.com/alextanhongpin/url-shortener/database"
 
@@ -27,15 +27,19 @@ var rawStmts = database.RawStmts{
 	WithCode: `
 		SELECT long_url 
 		  FROM url
-		 WHERE code = $1
+		 WHERE id = $1
 	`,
 
 	CheckExists: `
-		SELECT EXISTS (SELECT 1 FROM url WHERE code = $1)
+		SELECT EXISTS (SELECT 1 FROM url WHERE id = $1)
 	`,
 
 	Create: `
-		INSERT INTO url (code, long_url, expire_at)
-		VALUES ($1, $2, $3)
+		INSERT INTO url (id, long_url)
+		VALUES ($1, $2)
+		ON CONFLICT(long_url)
+		DO UPDATE
+		SET updated_at = now()
+		RETURNING id
 	`,
 }

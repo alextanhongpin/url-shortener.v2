@@ -1,12 +1,11 @@
-package health
+package healthsvc
 
 import (
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/alextanhongpin/url-shortener/domain"
-
+	"github.com/alextanhongpin/url-shortener/domain/health"
 	"github.com/go-chi/chi"
 )
 
@@ -21,7 +20,7 @@ func NewController(version string) *Controller {
 }
 
 func (ctl *Controller) GetHealth(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(domain.Health{
+	json.NewEncoder(w).Encode(health.Health{
 		DeployedAt: DeployedAt,
 		Uptime:     time.Since(DeployedAt).String(),
 		Version:    ctl.version,

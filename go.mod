@@ -3,7 +3,7 @@ module github.com/alextanhongpin/url-shortener
 go 1.12
 
 require (
-	github.com/Masterminds/squirrel v1.1.0
+	github.com/Masterminds/squirrel v1.1.0 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
 	github.com/alextanhongpin/pkg v0.0.2
 	github.com/corpix/uarand v0.1.1 // indirect
@@ -17,6 +17,7 @@ require (
 	github.com/go-playground/locales v0.12.1 // indirect
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428 // indirect
+	github.com/jteeuwen/go-bindata v3.0.7+incompatible // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/leebenson/conform v0.0.0-20190822094432-4c55492f71d7
 	github.com/leodido/go-urn v1.1.0 // indirect
@@ -31,6 +32,6 @@ require (
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v8 v8.18.2
+	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 )

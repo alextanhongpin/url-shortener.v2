@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 // Stmt represents a unique id for the stmt.
 type Stmt uint
@@ -18,7 +21,8 @@ func (rawStmts RawStmts) MustPrepare(db *sql.DB) Stmts {
 	for key, value := range rawStmts {
 		stmts[key], err = db.Prepare(value)
 		if err != nil {
-			panic(err)
+			stmtErr := fmt.Errorf("prepareError: %w with %s", err, value)
+			panic(stmtErr)
 		}
 	}
 	return stmts

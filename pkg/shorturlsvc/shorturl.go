@@ -1,4 +1,4 @@
-package shorturl
+package shorturlsvc
 
 import (
 	"crypto/sha256"
@@ -12,20 +12,20 @@ import (
 // N represents the maximum length of the shortened url code.
 const N = 6
 
-// Shortener implements the Shortener interface.
-type Shortener struct{}
+// Service implements the Shortener interface.
+type Service struct{}
 
-// NewShortener returns a new Shortener implementation.
-func NewShortener() *Shortener {
-	return &Shortener{}
+// NewService returns a new Shortener implementation.
+func NewService() *Service {
+	return &Service{}
 }
 
 // Shorten takes a long url and return the short url code.
-func (s *Shortener) Shorten(url string) string {
+func (s *Service) Shorten(url string) string {
 	return Shorten(sha256.New(), url)[:N]
 }
 
-// ShortenSha256 shortens a string using SHA256.
+// Shorten shortens a string using SHA256.
 func Shorten(h hash.Hash, str string) string {
 	h.Write([]byte(str))
 	code := h.Sum(nil)

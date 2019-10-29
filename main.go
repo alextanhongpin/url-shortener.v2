@@ -8,8 +8,8 @@ import (
 
 	"github.com/alextanhongpin/url-shortener/api/middleware"
 	"github.com/alextanhongpin/url-shortener/app"
-	"github.com/alextanhongpin/url-shortener/pkg/health"
-	"github.com/alextanhongpin/url-shortener/pkg/shorturl"
+	"github.com/alextanhongpin/url-shortener/pkg/healthsvc"
+	"github.com/alextanhongpin/url-shortener/pkg/shorturlsvc"
 
 	"github.com/go-chi/chi"
 )
@@ -28,7 +28,7 @@ func main() {
 
 	// UseCase: Serve health endpoint.
 	{
-		ctl := health.NewController(cfg.Version)
+		ctl := healthsvc.NewController(cfg.Version)
 		r.Mount("/health", ctl.Router())
 	}
 
@@ -36,9 +36,10 @@ func main() {
 	// We can also make this as a foogle (feature-toggle):
 	// if (enableRoute)
 	{
-		repo := shorturl.NewRepository(ctn.DB())
-		svc := shorturl.NewService(repo, shorturl.NewShortener(), ctn.Validator())
-		ctl := shorturl.NewController(svc)
+		repo := shorturlsvc.NewRepository(ctn.DB())
+		svc := shorturlsvc.NewService()
+		usecase := shorturlsvc.NewUseCase(repo, svc, ctn.Validator())
+		ctl := shorturlsvc.NewController(usecase)
 		r.Mount("/v1", ctl.Router())
 	}
 

@@ -1,15 +1,15 @@
-package shorturl_test
+package shorturlsvc_test
 
 import (
 	"crypto/sha256"
 	"testing"
 
-	"github.com/alextanhongpin/url-shortener/pkg/shorten"
+	"github.com/alextanhongpin/url-shortener/pkg/shorturlsvc"
 )
 
 func testShortenString(t *testing.T, str string) {
-	shortener := shorten.New()
-	expected := shorten.Shorten(sha256.New(), str)[:6]
+	shortener := shorturlsvc.NewService()
+	expected := shorturlsvc.Shorten(sha256.New(), str)[:6]
 	actual := shortener.Shorten(str)
 
 	if expected != actual {

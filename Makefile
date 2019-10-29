@@ -11,9 +11,10 @@ start: generate up
 init:
 	@go mod init
 
-tidy:
-	@brew install golang-migrate
+install:
+	@go get -u github.com/jteeuwen/go-bindata/...
 	@go mod tidy
+	@brew install golang-migrate
 
 up:
 	@docker-compose up -d
