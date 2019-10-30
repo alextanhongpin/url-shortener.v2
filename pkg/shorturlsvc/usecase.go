@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"math/rand"
-	"time"
 
 	"github.com/alextanhongpin/url-shortener/domain/shorturl"
 	"github.com/lib/pq"
@@ -17,10 +15,6 @@ import (
 var (
 	ErrUsedShortID = errors.New("short id is already used")
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 type UseCase struct {
 	urls    shorturl.Repository
