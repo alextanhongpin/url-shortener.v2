@@ -1,0 +1,153 @@
+# Postgres config map.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: test
+  POSTGRES_USER: john
+  POSTGRES_PASSWORD: "123456"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv-volume
+  labels:
+    type: local
+    app: postgres
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    # Relative path, i.e. $(PWD) is not allowed, must use absolute path.
+    path: "/Users/alextanhongpin/Documents/golang/src/github.com/alextanhongpin/url-shortener/tmp/postgres"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Postgres deployment.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:11.5-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+        envFrom:
+          - configMapRef:
+              name: postgres-config
+        volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgredb
+      volumes:
+        - name: postgredb
+          # hostPath:
+          #   path: "/tmp/postgres"
+          #   type: Directory
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+---
+# Service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  type: NodePort
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-shortener-service
+spec:
+  type: NodePort
+  selector:
+    app: url-shortener
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+# Service.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-deployment
+  labels:
+    app: url-shortener
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-shortener
+  template:
+    metadata:
+      labels:
+        app: url-shortener
+    spec:
+      containers:
+      - name: url-shortener
+        image: alextanhongpin/url-shortener:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_DB
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_USER
+        - name: DB_PASS
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_PASSWORD
+        - name: DB_HOST
+          # To debug, kubectl exec <pod-name> -- printenv | grep SERVICE.
+          value: $(POSTGRES_SERVICE_SERVICE_HOST)
+        - name: DB_PORT
+          value: $(POSTGRES_SERVICE_SERVICE_PORT)
+        - name: ENABLE_DB_MIGRATION
+          value: "true" 

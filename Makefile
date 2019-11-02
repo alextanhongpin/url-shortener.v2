@@ -6,6 +6,8 @@ DATABASE_URL := postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME
 MIGRATION_PATH := database/migrations
 IMG := alextanhongpin/url-shortener
 
+.PHONY: kubernetes
+
 start: generate up
 	@go run main.go
 
@@ -47,3 +49,9 @@ docker: generate
 
 docker-start:
 	@docker run -d -p 8080:8080 ${IMG}
+
+up-kube:
+	@kubectl apply -f kubernetes.yml
+
+down-kube:
+	@kubectl delete -f kubernetes.yml
