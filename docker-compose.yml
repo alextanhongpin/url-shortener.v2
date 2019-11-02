@@ -10,3 +10,13 @@ services:
                         - ${DB_HOST}:${DB_PORT}:5432
                 volumes:
                         - ./tmp/postgres:/var/lib/postgresql/data
+        service:
+                image: ${IMG}
+                environment:
+                        DB_HOST: db 
+                env_file:
+                        - .env
+                ports: 
+                        - 127.0.0.1:8080:8080
+                links:
+                        - db

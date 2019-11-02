@@ -4,6 +4,7 @@ export
 VERSION := $(shell git rev-parse --short HEAD)
 DATABASE_URL := postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
 MIGRATION_PATH := database/migrations
+IMG := alextanhongpin/url-shortener
 
 start: generate up
 	@go run main.go
@@ -40,3 +41,9 @@ rollback: # Rollback the database migration manually.
 
 generate: # Generate the binary data for the database migration.
 	@go-bindata -prefix ${MIGRATION_PATH} -pkg migrations -o ${MIGRATION_PATH}/bindata.go ${MIGRATION_PATH}/...
+
+docker: generate
+	@docker build --build-arg VERSION=${VERSION} -t ${IMG} .
+
+docker-start:
+	@docker run -d -p 8080:8080 ${IMG}
